@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/ng717/eclipse-workspace/Video Rent System/gson-2.9.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ng717/git/VideoRent/Video Rent System/gson-2.9.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

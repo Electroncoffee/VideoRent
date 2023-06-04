@@ -11,21 +11,24 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
-
+/**데이터 입출력 관리, JSON방식 사용, gson라이브러리 사용**/
 public class Data_IO {
 	public static final String FILE_MEM = "Member.txt";
 	public static final String FILE_VOD = "Video.txt";
 	public static final String FILE_UN = "unique_numbers.txt";
+	/**회원데이터 저장**/
     public static void Json_in_M(ArrayList<Member> member_list) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String memberJson = gson.toJson(member_list);
         saveJsonToFile(memberJson, FILE_MEM);
     }
+    /**비디오데이터 저장**/
     public static void Json_in_V(ArrayList<Video> video_list) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String videoJson = gson.toJson(video_list);
         saveJsonToFile(videoJson, FILE_VOD);
     }
+    /**JSON받아서 TXT에 넣기**/
     private static void saveJsonToFile(String json, String fileName) {
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write(json);
@@ -35,6 +38,7 @@ public class Data_IO {
             e.printStackTrace();
         }
     }
+    /**회원데이터 로드**/
     public static ArrayList<Member> loadMembers() {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_MEM))) {
             Gson gson = new Gson();
@@ -45,6 +49,7 @@ public class Data_IO {
             return new ArrayList<Member>();
         }
     }
+    /**비디오데이터 로드**/
     public static ArrayList<Video> loadVideos() {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_VOD))) {
             Gson gson = new Gson();
@@ -55,7 +60,7 @@ public class Data_IO {
             return new ArrayList<Video>();
         }
     }
-    //--최초 데이터 로드 후 해당 데이터가 유효한지 확인하기--//
+    /**최초 데이터 로드 무결성 확인**/
     public static boolean File_Check(ArrayList<Member> member_list, ArrayList<Video> video_list) {
     	if(File_Check_1(member_list))
     		if(File_Check_2(member_list))
@@ -67,7 +72,7 @@ public class Data_IO {
     								return true;
     	return false;
     }
-    //1.회원의 전화번호는 모두 숫자인가
+    /**회원의 전화번호데이터가 숫자인가**/
     private static boolean File_Check_1(ArrayList<Member> member_list) {
     	for (Member member : member_list) {//회원의
     		String PhNum = member.Pn_return();
@@ -81,7 +86,7 @@ public class Data_IO {
     	System.out.println("File_Check_1 complete");
     	return true;
     }
-    //2.회원의 대여정보 고유넘버는 모두 숫자인가
+    /**회원 대여 비디오 고유넘버는 숫자인가**/
     private static boolean File_Check_2(ArrayList<Member> member_list) {
     	for (Member member : member_list) {//회원의
     		for (Member_RentData RData : member.rent_return_all()) {//대여정보의 고유넘버가
@@ -97,7 +102,7 @@ public class Data_IO {
     	System.out.println("File_Check_2 complete");
     	return true;
     }
-    //3.비디오의 수량과 대여수량이 유효한 숫자인가
+    /**대여수량이 일치하는가**/
     private static boolean File_Check_3(ArrayList<Video> video_list) {
     	for (Video video : video_list) {//비디오의
     		if(video.Vc_return()<0) {//수량이 음수인가
@@ -114,11 +119,11 @@ public class Data_IO {
     	System.out.println("File_Check_3 complete");
     	return true;
     }
-    //4.모든 비디오 고유넘버는 모두 숫자인가
+    /**비디오 고유넘버는 숫자인가**/
     private static boolean File_Check_4(ArrayList<Video> video_list) {
     	for (Video video : video_list) {//비디오의
     		String UN = video.Vn_return();
-    	    for (int i = 0; i < UN.length(); i++) {//전화번호에
+    	    for (int i = 0; i < UN.length(); i++) {//고유넘버에
     	        if (!Character.isDigit(UN.charAt(i))) {//숫자가 아닌것이 있다면
     	        	System.out.println("File_Check_4 failed");
     	            return false;
@@ -128,7 +133,7 @@ public class Data_IO {
     	System.out.println("File_Check_4 complete");
     	return true;
     }
-    //5.한명의 회원의 대여정보에 중복된 고유넘버가 있는가
+    /**대여정보에 동일한 고유넘버가 있는가**/
     private static boolean File_Check_5(ArrayList<Member> member_list) {
     	for (Member member : member_list) {//회원의
     		ArrayList<Member_RentData> MRData = member.rent_return_all();//모든대여정보
@@ -147,7 +152,7 @@ public class Data_IO {
     	System.out.println("File_Check_5 complete");
     	return true;
     }
-    //6.회원이 대여한 모든 비디오가 존재하는가
+    /**대여한 비디오는 유효한 데이터인가**/
     private static boolean File_Check_6(ArrayList<Member> member_list, ArrayList<Video> video_list) {
     	int MList_size = member_list.size();
     	int i=0;
@@ -175,7 +180,7 @@ public class Data_IO {
     	System.out.println("File_Check_6 complete");
     	return true;
     }
-    //7.회원이 대여한 비디오와 잔여 비디오개수를 전부 합치면 총수량과 같은가
+    /**모든 수량이 일치하는가**/
     private static boolean File_Check_7(ArrayList<Member> member_list, ArrayList<Video> video_list) {
     	for (Video video : video_list) {//비디오의
 			int RVNum = video.Rc_return();//대여된 갯수가져오기
